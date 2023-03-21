@@ -1,123 +1,65 @@
 const express = require('express');
-const app = express();
 const cafeRoutes = express.Router();
-const path = require('path');
 
-
-// Require Business model in our routes module
 let Cafe = require('../models/Cafe');
+let Employee = require('../models/Employee');
 
-// http://localhost:4000/business/add  
+
 cafeRoutes.route('/add').post(function (req, res) {
   let cafeData = new Cafe(req.body);
-console.log(cafeData)
+
   cafeData.save(function (err, savedJob) {
     if (err) {
       return res.status(400).send("unable to save to database" + err);
     } else {
-      return res.status(200).json({ 'business': 'business in added successfully' });
+      return res.status(200).json({ 'cafe': 'cafe added successfully' });
     }
   })
 });
 
-// http://localhost:4000/business 
 cafeRoutes.route('/').get(function (req, res) {
-  ;
-  Cafe.find(function (err, businesses) {
+  Cafe.find(function (err, cafes) {
     if (err) {
       console.log(err);
     }
     else {
-      res.json(businesses);
+      res.json(cafes);
     }
   });
 });
 
-//
 cafeRoutes.route('/cafes').get(function (req, res) {
-  console.log(req.query)
 
-  Cafe.find(function (err, businesses) {
+  Cafe.find(function (err, cafes) {
     if (err) {
       console.log(err);
     }
     else {
-      console.log(businesses)
-
-      // res.json(businesses);
+   
+     const filteredCafes = cafes.filter(cafe => cafe.location === req.query.location);
+      res.json(filteredCafes);
     }
   }
   );
 });
 
+cafeRoutes.route('/edit/:id').put(async function (req, res) {
+  try {
+  let result = await Cafe.updateOne({_id:req.params.id},{
+    $set:{
+      name:req.body.name,
+      description:req.body.description,
+      location:req.body.location,
+      employees:req.body.employees
 
-// Defined edit route
-// cafeRoutes.route('/edit/:id').get(function (req, res) {
-//   let id = req.params.id;
-//   Cafe.findById(id, function (err, business) {
-//     res.json(business);
-//   });
-// });
-
-cafeRoutes.route('/edit/:id').put(function (req, res) {
-  let id = req.params.id;
-  let updatedCafeData = new Cafe(req.body);
-  Cafe.findById(id, function (err, business) {
-    updatedCafeData.update(function (err, savedJob) {
-      if (err) {
-        return res.status(400).send("unable to save to database" + err);
-      } else {
-        return res.status(200).json({ 'business': 'business in added successfully' });
-      }
-    })
-    // res.json(business);
-  });
+    }
+  })
+  res.json(result)
+  } catch (err) {
+    res.status(400).send("unable to save to database" + err);
+  }
 });
 
-//  Defined update route
-cafeRoutes.route('/update/:id').post(function (req, res) {
-  Cafe.findById(req.params.id, function (err, business) {
-    // if (!business)
-    //   return next(new Error('Could not load Document'));
-    // else {
-      business.person_name = req.body.person_name;
-      business.business_name = req.body.business_name;
-      business.business_gst_number = req.body.business_gst_number;
-
-      business.save().then(business => {
-        res.json('Update complete');
-      })
-        .catch(err => {
-          res.status(400).send("unable to update the database");
-        });
-    // }
-  });
-});
-
-// Defined delete | remove | destroy route
-// cafeRoutes.route('/delete/:id').get(async function (req, res) {
-//   // res.send('Delete by ID API')
-//   try {
-//     const id = req.params.id;
-//     const data = await Cafe.findByIdAndDelete(id)
-//     res.send(`Document with ${data.name} has been deleted..`)
-// }
-// catch (error) {
-//     res.status(400).json({ message: error.message })
-// }
-
-  // Cafe.findByIdAndRemove({ _id: req.params.id }, function (err, business) {
-  //   console.log(business, req.params.id , 'fvs')
-  //   if (err) res.json(err);
-  //   else res.json('Successfully removed');
-  // });
-
-  //  Cafe.findByIdAndDelete(req.params.id).then((dvd)=>{
-  //   console.log(dvd , 'Successfully deleted ');    
-  //  });
-// });
-
-//Delete by ID Method
 cafeRoutes.delete('/delete/:id', async (req, res) => {
   try {
       const id = req.params.id;
@@ -129,5 +71,36 @@ cafeRoutes.delete('/delete/:id', async (req, res) => {
   }
 })
 
+cafeRoutes.route('/registeremployee/:id').post(async function (req, res) {
+  let result;
+
+
+  let findcafe = await Cafe.findOne({_id:req.params.id})
+  findcafe.employees.push(new Employee(req.body))
+    result = await Cafe.updateOne({_id:req.params.id},{
+      $set:{
+        employees: findcafe.employees
+      }
+    })
+  res.json(result)
+});
+
+
+
+cafeRoutes.route('/employees').get(function (req, res) {
+
+  Cafe.find(function (err, cafes) {
+    if (err) {
+      console.log(err);
+    }
+    else {
+   
+     const filteredCafes = cafes.filter(cafe => cafe.name === req.query.cafe);
+
+      res.json(filteredCafes[0].employees);
+    }
+  }
+  );
+});
 
 module.exports = cafeRoutes;

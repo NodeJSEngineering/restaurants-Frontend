@@ -1,9 +1,6 @@
 
 
 const mongoose = require('mongoose');
-// const uuid = require('uuid')
-const { v4: uuid } = require('uuid');
-
 
 const employeeSchema = new mongoose.Schema({
     name: {
@@ -20,25 +17,16 @@ const employeeSchema = new mongoose.Schema({
         enum : ['Male', 'Female'],
         required: true
       },
-      // id: {
-      //   type: String
-      // },
       CafeName: {
+        type: String
+      },
+      cafeId:{
         type: String
       },
       start_date: {
         type: Date,
         default: Date.now
       },
-      _id: {
-        type: String,
-        default: () => uuid(6),
-      },
-      
-      // _ownerId:{
-      //   type: mongoose.Types.ObjectId,
-      //   required: true
-      //   }
 },
 
     {
