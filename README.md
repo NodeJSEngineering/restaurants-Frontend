@@ -22,6 +22,11 @@ I'm Sam, and I'm passionate about product engineering and web development. I cre
 ### About the app
 Implemented basics of React js.
 
+### Packages used
+-    "redux": "^4.2.1",
+-    "redux-devtools-extension": "^2.13.9",
+-    "redux-thunk": "^2.4.2",
+
 ## Subscribe and Stay Updated!
 
 Don't miss out on new videos! Subscribe to my channel and hit the notification bell 🔔 to receive updates whenever I upload fresh content. Let's learn, laugh, and explore together!
