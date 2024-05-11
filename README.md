@@ -26,6 +26,7 @@ Implemented basics of React js.
 -    "redux": "^4.2.1",
 -    "redux-devtools-extension": "^2.13.9",
 -    "redux-thunk": "^2.4.2",
+- @mui/material
 
 ## Subscribe and Stay Updated!
 

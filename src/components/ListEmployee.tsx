@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { loadProducts } from "../reducers/cafe-thunk";
 import { useAppDispatch } from "../store/store";
+import Button from '@mui/material/Button';
 
 function EmployeeGrid() {
   const InitialRowData = [
@@ -42,7 +43,8 @@ function EmployeeGrid() {
   ];
   return (
     <div>
-      <button>Add new Employee</button>
+      <Button variant="contained">Add new Employee</Button>;
+
       <div
         className="ag-theme-alpine"
         style={{ height: 400, width: 600, margin: 100 }}
